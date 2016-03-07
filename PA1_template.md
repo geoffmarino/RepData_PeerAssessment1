@@ -23,10 +23,15 @@ sumsteps <- activity %>% group_by(date) %>%
 
 names(sumsteps) <- c("date", "tsteps")
 
+png("~/RepData_PeerAssessment1/figures/figure1.png")
 with(sumsteps, hist(tsteps))
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+```
+## quartz_off_screen 
+##                 2
+```
 
 ```r
 mean(sumsteps$tsteps, na.rm = TRUE)
@@ -57,10 +62,15 @@ avgsteps <- activity %>% group_by(interval) %>%
 
 names(avgsteps) <- c("interval", "average.steps")
 
+png("~/RepData_PeerAssessment1/figures/figure2.png")
 ggplot(avgsteps, aes(interval, average.steps)) + geom_line()
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+```
+## quartz_off_screen 
+##                 2
+```
 
 ```r
 m <- max(avgsteps$average.steps)
@@ -102,10 +112,15 @@ nonasumsteps <- nona %>% group_by(date) %>%
 
 names(nonasumsteps) <- c("date", "tsteps")
 
+png("~/RepData_PeerAssessment1/figures/figure3.png")
 with(nonasumsteps, hist(tsteps))
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+```
+## quartz_off_screen 
+##                 2
+```
 
 ```r
 mean(nonasumsteps$tsteps)
@@ -146,7 +161,12 @@ nona2 <- nona2 %>% select(steps, date, interval, wk.o)
 avg.nona2 <- nona2 %>% group_by(interval, wk.o) %>%
         summarise(avg.steps = mean(steps))
 
+png("~/RepData_PeerAssessment1/figures/figure4.png")
 qplot(interval, avg.steps, data = avg.nona2, facets = wk.o~., geom = "line", ylab = "average steps")
+dev.off()
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
+```
+## quartz_off_screen 
+##                 2
+```
