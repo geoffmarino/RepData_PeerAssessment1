@@ -4,7 +4,8 @@
 As part of the processing of the raw data, I used functions from the dpylr and lubridate
 packages. ggplot2 was used to create the explanatory graphics. After loading the packages,
 I read the data file from my working directory and stored the output in "activity". 
-```{r, echo = TRUE}
+
+```r
 activity <- read.csv("~/activity.csv")
 ```
 
@@ -15,16 +16,32 @@ number of steps taken throughout every day for two months. The recordings were d
 month period of data collection, I constructed a separate data frame that matched the total
 steps to the corresponding date. Thereafter, I computed the mean and median of all total steps
 per day recorded over that two month period.
-```{r, echo = TRUE}
+
+```r
 sumsteps <- activity %>% group_by(date) %>%
                 summarise(sum(steps))
 
 names(sumsteps) <- c("date", "tsteps")
 
 with(sumsteps, hist(tsteps))
+```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+
+```r
 mean(sumsteps$tsteps, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(sumsteps$tsteps, na.rm = TRUE)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
@@ -33,24 +50,44 @@ a new data frame that computes the average amount of steps taken, on average, fo
 during a given day. A plot visualizes the average steps across the intervals. I then calculate
 the exact interval recording the average maximum amount of steps taken in a given day. The 835
 minute interval records the greatest activity, on average, in a given day.
-```{r, echo = TRUE}
+
+```r
 avgsteps <- activity %>% group_by(interval) %>%
                 summarise(mean(steps, na.rm = TRUE))
 
 names(avgsteps) <- c("interval", "average.steps")
 
 ggplot(avgsteps, aes(interval, average.steps)) + geom_line()
+```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+
+```r
 m <- max(avgsteps$average.steps)
 subset(avgsteps, average.steps == m)
+```
+
+```
+## Source: local data frame [1 x 2]
+## 
+##   interval average.steps
+##      (int)         (dbl)
+## 1      835      206.1698
 ```
 
 ## Imputing missing values
 In previous steps, I removed all NA values in calculating step summaries. In the current step,
 I redefine the NA values to be the mean step value for that interval in a given day, and recalculate the mean and median total steps taken per day. The results show little to no difference.
-```{r, echo = TRUE}
-sum(is.na(activity))
 
+```r
+sum(is.na(activity))
+```
+
+```
+## [1] 2304
+```
+
+```r
 nona <- activity
 for (i in 1:nrow(nona)) {
         if(is.na(nona$steps[i]) == TRUE) {
@@ -66,14 +103,30 @@ nonasumsteps <- nona %>% group_by(date) %>%
 names(nonasumsteps) <- c("date", "tsteps")
 
 with(nonasumsteps, hist(tsteps))
+```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+
+```r
 mean(nonasumsteps$tsteps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(nonasumsteps$tsteps)
+```
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 I create a factor variable to indicate whether the date corresponding to a given observation is a weekday or weekend. I then construct a plot measuring average steps taken in a given day during all intervals. As is illustrated in the plot, activity levels increases/decreases were mostly correlated with each other, however, the magnitude of such changes differed. To note, this plot utilizes the data frame with substituted NA values generated in the previous heading.
-```{r, echo = TRUE}
+
+```r
 newdate <- ymd(nona$date)
 nona2 <- nona
 nona2$date <- newdate
@@ -94,3 +147,6 @@ avg.nona2 <- nona2 %>% group_by(interval, wk.o) %>%
         summarise(avg.steps = mean(steps))
 
 qplot(interval, avg.steps, data = avg.nona2, facets = wk.o~., geom = "line", ylab = "average steps")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
